@@ -2,6 +2,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_classic.schema import AIMessage, HumanMessage
 from dotenv import load_dotenv
+load_dotenv()
 
 import re
 import os
@@ -13,9 +14,9 @@ with open('schema.json', 'r') as f:
 
 conn = psy.connect(
     host="localhost",
-    database="NLP2SQL",
-    user="postgres",
-    password="GAurav!%!(",
+    database=os.getenv('DB_name'),
+    user=os.getenv('User'),
+    password=os.getenv('Password'),
     port="5433"
 )
 
@@ -39,7 +40,6 @@ def extract_sql(llm_response: str) -> str | None:
 
 cursor = conn.cursor()
 
-load_dotenv()
 os.environ['GOOGLE_API_KEY'] = os.getenv('Google_API_3')
 
 llm = ChatGoogleGenerativeAI(
