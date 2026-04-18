@@ -1,0 +1,450 @@
+{
+    "Table1": {
+        "table_name": "approval_matrix",
+        "description": "Amount-based approval tier lookup",
+
+        "columns": {
+            "id": {
+                "dtype": "integer",
+                "primary_key": true
+            },
+            "min_amount": {
+                "dtype": "decimal"
+            },
+            "max_amount": {
+                "dtype": "decimal"
+            },
+            "approver_role": {
+                "dtype": "text"
+            },
+            "approval_level": {
+                "dtype": "integer"
+            }
+        }
+    },
+
+    "Table2": {
+        "table_name": "companies",
+        "description": "Stores company details",
+
+        "columns": {
+            "id": {
+                "dtype": "integer",
+                "primary_key": true
+            },
+            "name": {
+                "dtype": "text"
+            },
+            "gstin": {
+                "dtype": "text"
+            },
+            "pan": {
+                "dtype": "text"
+            },
+            "state_code": {
+                "dtype": "text"
+            },
+            "city": {
+                "dtype": "text"
+            },
+            "is_buyer": {
+                "dtype": "integer",
+                "default": 1
+            }
+        }
+    },
+
+    "Table3": {
+        "table_name": "departments",
+        "description": "Stores department details within a company",
+
+        "columns": {
+            "id": {
+                "dtype": "integer",
+                "primary_key": true
+            },
+            "company_id": {
+                "dtype": "integer",
+                "foreign_key": "companies.id"
+            },
+            "name": {
+                "dtype": "text"
+            },
+            "head_name": {
+                "dtype": "text"
+            },
+            "head_email": {
+                "dtype": "text"
+            },
+            "budget_annual": {
+                "dtype": "decimal"
+            }
+        }
+    },
+
+    "Table4": {
+        "table_name": "grn_line_items",
+        "description": "Line items for goods receipt notes (GRNs)",
+
+        "columns": {
+            "id": {
+                "dtype": "integer",
+                "primary_key": true
+            },
+            "grn_id": {
+                "dtype": "integer",
+                "foreign_key": "grns.id"
+            },
+            "product_id": {
+                "dtype": "integer",
+                "foreign_key": "products.id"
+            },
+            "po_line_item_id": {
+                "dtype": "integer",
+                "foreign_key": "po_line_items.id"
+            },
+            "quantity_received": {
+                "dtype": "decimal"
+            },
+            "quantity_rejected": {
+                "dtype": "decimal",
+                "default": 0
+            },
+            "remarks": {
+                "dtype": "text"
+            }
+        }
+    },
+
+    "Table5": {
+        "table_name": "grns",
+        "description": "Stores goods receipt notes (GRNs)",
+
+        "columns": {
+            "id": {
+                "dtype": "integer",
+                "primary_key": true
+            },
+            "grn_number": {
+                "dtype": "text",
+                "unique": true
+            },
+            "po_id": {
+                "dtype": "integer",
+                "foreign_key": "purchase_orders.id"
+            },
+            "vendor_id": {
+                "dtype": "integer",
+                "foreign_key": "vendors.id"
+            },
+            "grn_date": {
+                "dtype": "date"
+            },
+            "received_by": {
+                "dtype": "text"
+            },
+            "status": {
+                "dtype": "text",
+                "enum": ["draft", "confirmed", "partial"]
+            }
+        }
+    },
+
+    "Table6": {
+        "table_name": "invoice_line_items",
+        "description": "Line items for invoices",
+
+        "columns": {
+            "id": {
+                "dtype": "integer",
+                "primary_key": true
+            },
+            "invoice_id": {
+                "dtype": "integer",
+                "foreign_key": "invoices.id"
+            },
+            "product_id": {
+                "dtype": "integer",
+                "foreign_key": "products.id"
+            },
+            "description": {
+                "dtype": "text"
+            },
+            "hsn_code": {
+                "dtype": "text"
+            },
+            "quantity": {
+                "dtype": "decimal"
+            },
+            "unit_rate": {
+                "dtype": "decimal"
+            },
+            "total_amount": {
+                "dtype": "decimal"
+            },
+            "cgst": {
+                "dtype": "decimal",
+                "default": 0
+            },
+            "sgst": {
+                "dtype": "decimal",
+                "default": 0
+            },
+            "igst": {
+                "dtype": "decimal",
+                "default": 0
+            }
+        }
+    },
+
+    "Table7": {
+        "table_name": "invoices",
+        "description": "Stores vendor invoices and their lifecycle",
+
+        "columns": {
+            "id": {
+                "dtype": "integer",
+                "primary_key": true
+            },
+            "invoice_number": {
+                "dtype": "text"
+            },
+            "vendor_id": {
+                "dtype": "integer",
+                "foreign_key": "vendors.id"
+            },
+            "company_id": {
+                "dtype": "integer",
+                "foreign_key": "companies.id"
+            },
+            "po_id": {
+                "dtype": "integer",
+                "foreign_key": "purchase_orders.id"
+            },
+            "invoice_date": {
+                "dtype": "date"
+            },
+            "due_date": {
+                "dtype": "date"
+            },
+            "total_taxable_amount": {
+                "dtype": "decimal"
+            },
+            "total_tax": {
+                "dtype": "decimal"
+            },
+            "grand_total": {
+                "dtype": "decimal"
+            },
+            "currency": {
+                "dtype": "text",
+                "default": "INR"
+            },
+            "status": {
+                "dtype": "text",
+                "enum": ["received", "validated", "approved", "rejected", "on_hold", "paid", "partially_paid"]
+            },
+            "deviation_type": {
+                "dtype": "text"
+            },
+            "deviation_details": {
+                "dtype": "text"
+            },
+            "approved_by": {
+                "dtype": "text"
+            },
+            "approval_date": {
+                "dtype": "date"
+            },
+            "created_at": {
+                "dtype": "timestamp",
+                "default": "CURRENT_TIMESTAMP"
+            }
+        }
+    },
+
+    "Table8": {
+        "table_name": "payments",
+        "description": "Stores payment details for invoices",
+
+        "columns": {
+            "id": {
+                "dtype": "integer",
+                "primary_key": true
+            },
+            "invoice_id": {
+                "dtype": "integer",
+                "foreign_key": "invoices.id"
+            },
+            "payment_date": {
+                "dtype": "date"
+            },
+            "amount": {
+                "dtype": "decimal"
+            },
+            "payment_mode": {
+                "dtype": "text",
+                "enum": ["NEFT", "RTGS", "UPI", "cheque"]
+            },
+            "reference_number": {
+                "dtype": "text"
+            },
+            "bank_account": {
+                "dtype": "text"
+            }
+        }
+    },
+
+    "Table9": {
+        "table_name": "po_line_items",
+        "description": "Line items for purchase orders",
+
+        "columns": {
+            "id": {
+                "dtype": "integer",
+                "primary_key": true
+            },
+            "po_id": {
+                "dtype": "integer",
+                "foreign_key": "purchase_orders.id"
+            },
+            "product_id": {
+                "dtype": "integer",
+                "foreign_key": "products.id"
+            },
+            "quantity": {
+                "dtype": "decimal"
+            },
+            "unit_rate": {
+                "dtype": "decimal"
+            },
+            "total_amount": {
+                "dtype": "decimal"
+            },
+            "tax_rate": {
+                "dtype": "decimal",
+                "default": 18.00
+            }
+        }
+    },
+
+    "Table10": {
+        "table_name": "products",
+        "description": "Stores product details",
+
+        "columns": {
+            "id": {
+                "dtype": "integer",
+                "primary_key": true
+            },
+            "code": {
+                "dtype": "text",
+                "unique": true
+            },
+            "name": {
+                "dtype": "text"
+            },
+            "category": {
+                "dtype": "text"
+            },
+            "hsn_code": {
+                "dtype": "text"
+            },
+            "unit": {
+                "dtype": "text",
+                "default": "NOS"
+            },
+            "standard_rate": {
+                "dtype": "decimal"
+            }
+        }
+    },
+
+    "Table11": {
+        "table_name": "purchase_orders",
+        "description": "Stores purchase order details",
+
+        "columns": {
+            "id": {
+                "dtype": "integer",
+                "primary_key": true
+            },
+            "po_number": {
+                "dtype": "text",
+                "unique": true
+            },
+            "company_id": {
+                "dtype": "integer",
+                "foreign_key": "companies.id"
+            },
+            "vendor_id": {
+                "dtype": "integer",
+                "foreign_key": "vendors.id"
+            },
+            "department_id": {
+                "dtype": "integer",
+                "foreign_key": "departments.id"
+            },
+            "po_date": {
+                "dtype": "date"
+            },
+            "total_amount": {
+                "dtype": "decimal"
+            },
+            "status": {
+                "dtype": "text",
+                "enum": ["draft", "approved", "partially_received", "received", "closed", "cancelled"]
+            },
+            "approved_by": {
+                "dtype": "text"
+            },
+            "created_at": {
+                "dtype": "timestamp",
+                "default": "CURRENT_TIMESTAMP"
+            }
+        }
+    },
+
+    "Table12": {
+        "table_name": "vendors",
+        "description": "Stores vendor details",
+
+        "columns": {
+            "id": {
+                "dtype": "integer",
+                "primary_key": true
+            },
+            "name": {
+                "dtype": "text"
+            },
+            "gstin": {
+                "dtype": "text"
+            },
+            "pan": {
+                "dtype": "text"
+            },
+            "state_code": {
+                "dtype": "text"
+            },
+            "city": {
+                "dtype": "text"
+            },
+            "payment_terms_days": {
+                "dtype": "integer",
+                "default": 30
+            },
+            "is_watchlist": {
+                "dtype": "integer",
+                "default": 0
+            },
+            "rating": {
+                "dtype": "text",
+                "enum": ["A", "B", "C", "D"]
+            },
+            "onboarded_date": {
+                "dtype": "date"
+            }
+        }
+    }
+
+}
